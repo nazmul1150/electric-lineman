@@ -8,15 +8,27 @@
  * Text Domain: electric-lineman-booking
  */
 
-defined('ABSPATH') || exit;
- 
-define('ELM_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('ELM_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-require_once ELM_PLUGIN_PATH . 'includes/class-electric-lineman.php';
+if ( !defined( 'ABSPATH' ) ) exit;
 
-function run_electric_lineman() {
-    $plugin = new Electric_Lineman\Main();
+define( 'ELM_PATH', plugin_dir_path( __FILE__ ) );
+define( 'ELM_URL', plugin_dir_url( __FILE__ ) );
+
+// Autoloader for OOP structure
+spl_autoload_register( function($class){
+    if(strpos($class, 'ELM\\') !== false ){
+        $class_path = str_replace( 'ELM\\', '', $class );
+        $class_path = str_replace( '\\', DIRECTORY_SEPARATOR, $class_path );
+        $file = ELM_PATH . 'includes/' . strtolower($class_path) . '.php';
+
+        if (file_exists($file)) {
+            require_once $file;
+        }
+    }
+} );
+
+// Plugin Init
+add_action('plugins_loaded', function() {
+    $plugin = new ELM\Main();
     $plugin->run();
-}
-run_electric_lineman();
+});
