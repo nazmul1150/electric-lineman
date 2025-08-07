@@ -25,8 +25,8 @@ class Main {
         (new \ELM\Admin_View())->init();
         (new \ELM\Settings_Page())->init();
 
-        // new \ELM\Routes\Route_Booking();
-        // new \ELM\Routes\Route_Settings();
+        new \ELM\Routes\Route_Booking();
+        new \ELM\Routes\Route_Settings();
     }
 }
  
