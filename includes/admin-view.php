@@ -6,20 +6,20 @@ defined('ABSPATH') || exit;
 class Admin_View {
 
     public function init() {
-        add_action('admin_menu', [$this, 'add_admin_page']);
+        //add_action('admin_menu', [$this, 'add_admin_page']);
     }
 
-    public function add_admin_page() {
-        add_menu_page(
-            __('All Bookings', 'electric-lineman'),   // Page title
-            __('Bookings', 'electric-lineman'),       // Menu title
-            'manage_options',                         // Capability
-            'elm-bookings',                           // Menu slug
-            [$this, 'render_bookings_page'],          // Callback
-            'dashicons-list-view',                    // Icon
-            26                                        // Position
-        );
-    }
+    // public function add_admin_page() {
+    //     add_menu_page(
+    //         __('All Bookings', 'electric-lineman'),   // Page title
+    //         __('Bookings', 'electric-lineman'),       // Menu title
+    //         'manage_options',                         // Capability
+    //         'elm-bookings',                           // Menu slug
+    //         [$this, 'render_bookings_page'],          // Callback
+    //         'dashicons-list-view',                    // Icon
+    //         26                                        // Position
+    //     );
+    // }
 
     public function render_bookings_page() {
         $args = [

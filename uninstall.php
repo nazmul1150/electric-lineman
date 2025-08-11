@@ -24,3 +24,8 @@ if (!empty($bookings)) {
         wp_delete_post($booking_id, true);
     }
 }
+
+
+global $wpdb;
+$table_name = $wpdb->prefix . 'elm_bookings';
+$wpdb->query("DROP TABLE IF EXISTS $table_name");

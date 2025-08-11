@@ -27,6 +27,17 @@ spl_autoload_register( function($class){
     }
 } );
 
+// Activation hook
+register_activation_hook(__FILE__, function(){
+    if (class_exists('ELM\\DB_Handler')) {
+        $db = new ELM\DB_Handler();
+        $db->activate();
+    } else {
+        error_log('DB_Handler class not found during activation');
+    }
+});
+
+
 // Plugin Init
 add_action('plugins_loaded', function() {
     $plugin = new ELM\Main();

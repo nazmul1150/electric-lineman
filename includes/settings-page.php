@@ -5,6 +5,12 @@ defined('ABSPATH') || exit;
 
 class Settings_Page {
 
+    private $admin_view;
+
+    public function __construct() {
+        $this->admin_view = new \ELM\Admin_View();
+    }
+
     public function init() {
         add_action('admin_menu', [$this, 'add_plugin_settings_page']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
@@ -19,6 +25,17 @@ class Settings_Page {
             [$this, 'render_settings_page'],
             'dashicons-admin-generic',
             27
+        );
+        //submenu
+        add_submenu_page(
+            'electric-lineman-settings',
+            __( 'All Bookings', 'electric-lineman' ),
+            __( 'Bookings', 'electric-lineman' ),
+            'manage_options',
+            'elm-bookings',
+            [$this->admin_view, 'render_bookings_page'],
+            'dashicons-list-view',
+            26
         );
     }
 
