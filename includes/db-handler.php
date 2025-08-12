@@ -1,13 +1,14 @@
 <?php
 namespace ELM;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 class DB_Handler {
+
     public function activate() {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'elm_bookings';
+        $table_name      = $wpdb->prefix . 'elm_bookings';
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE {$table_name} (
@@ -21,13 +22,6 @@ class DB_Handler {
         ) {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql);
-
-        // Debug log
-        if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
-            error_log("✅ Table {$table_name} created successfully.");
-        } else {
-            error_log("❌ Table {$table_name} creation failed.");
-        }
+        dbDelta( $sql );
     }
 }

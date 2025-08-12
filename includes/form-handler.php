@@ -14,7 +14,7 @@ class Form_Handler {
     public function handle_form() {
         // Validate nonce
         if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce($_POST['_wpnonce'], 'elm_booking_form') ) {
-            wp_die(__('Invalid nonce.', 'electric-lineman'));
+            wp_die(__('Invalid nonce.', ELM_TEXT_DOMAIN));
         }
 
         // Sanitize form inputs

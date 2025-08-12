@@ -53,7 +53,7 @@ class Route_Settings {
 
         return rest_ensure_response([
             'status'  => 'success',
-            'message' => __('Settings updated.', 'electric-lineman'),
+            'message' => __('Settings updated.', ELM_TEXT_DOMAIN),
         ]);
     }
 }

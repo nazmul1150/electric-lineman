@@ -12,14 +12,15 @@ class Settings_Page {
     }
 
     public function init() {
+        add_action('admin_notices', [$this, 'plugin_admin_notices']);
         add_action('admin_menu', [$this, 'add_plugin_settings_page']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
     }
 
     public function add_plugin_settings_page() {
         add_menu_page(
-            __('Electric Lineman Settings', 'electric-lineman'),
-            __('Lineman Settings', 'electric-lineman'),
+            __('Electric Lineman Settings', ELM_TEXT_DOMAIN),
+            __('Lineman Settings', ELM_TEXT_DOMAIN),
             'manage_options',
             'electric-lineman-settings',
             [$this, 'render_settings_page'],
@@ -29,8 +30,8 @@ class Settings_Page {
         //submenu
         add_submenu_page(
             'electric-lineman-settings',
-            __( 'All Bookings', 'electric-lineman' ),
-            __( 'Bookings', 'electric-lineman' ),
+            __( 'All Bookings', ELM_TEXT_DOMAIN ),
+            __( 'Bookings', ELM_TEXT_DOMAIN ),
             'manage_options',
             'elm-bookings',
             [$this->admin_view, 'render_bookings_page'],
@@ -41,7 +42,7 @@ class Settings_Page {
 
     public function render_settings_page() {
         echo '<div class="wrap">';
-        echo '<h1>' . esc_html__('Electric Lineman Settings', 'electric-lineman') . '</h1>';
+        echo '<h1>' . esc_html__('Electric Lineman Settings', ELM_TEXT_DOMAIN) . '</h1>';
         echo '<div id="electric-lineman-admin-root"></div>'; // React will hook here
         echo '</div>';
     }
@@ -78,5 +79,14 @@ class Settings_Page {
             'apiUrl' => esc_url_raw(rest_url('electric/v1/')),
             'nonce'  => wp_create_nonce('wp_rest'),
         ]);
+    }
+
+    public function plugin_admin_notices() {
+        if (isset($_GET['page']) && $_GET['page'] === 'electric-lineman-settings') {
+            echo '<div class="notice notice-warning">
+                    <p><strong>' . esc_html__('Warning:', ELM_TEXT_DOMAIN) . '</strong> 
+                    ' . esc_html__('If you delete the Electric Lineman plugin, all booking data will be permanently removed.', ELM_TEXT_DOMAIN) . '</p>
+                </div>';
+        }
     }
 }

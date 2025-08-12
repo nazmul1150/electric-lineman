@@ -11,8 +11,8 @@ class Admin_View {
 
     // public function add_admin_page() {
     //     add_menu_page(
-    //         __('All Bookings', 'electric-lineman'),   // Page title
-    //         __('Bookings', 'electric-lineman'),       // Menu title
+    //         __('All Bookings', ELM_TEXT_DOMAIN),   // Page title
+    //         __('Bookings', ELM_TEXT_DOMAIN),       // Menu title
     //         'manage_options',                         // Capability
     //         'elm-bookings',                           // Menu slug
     //         [$this, 'render_bookings_page'],          // Callback
@@ -31,15 +31,15 @@ class Admin_View {
         $bookings = get_posts($args);
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e('All Bookings', 'electric-lineman'); ?></h1>
+            <h1><?php esc_html_e('All Bookings', ELM_TEXT_DOMAIN); ?></h1>
             <table class="widefat fixed striped">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e('Name', 'electric-lineman'); ?></th>
-                        <th><?php esc_html_e('Email', 'electric-lineman'); ?></th>
-                        <th><?php esc_html_e('Phone', 'electric-lineman'); ?></th>
-                        <th><?php esc_html_e('Message', 'electric-lineman'); ?></th>
-                        <th><?php esc_html_e('Date', 'electric-lineman'); ?></th>
+                        <th><?php esc_html_e('Name', ELM_TEXT_DOMAIN); ?></th>
+                        <th><?php esc_html_e('Email', ELM_TEXT_DOMAIN); ?></th>
+                        <th><?php esc_html_e('Phone', ELM_TEXT_DOMAIN); ?></th>
+                        <th><?php esc_html_e('Message', ELM_TEXT_DOMAIN); ?></th>
+                        <th><?php esc_html_e('Date', ELM_TEXT_DOMAIN); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,7 +55,7 @@ class Admin_View {
                         <?php endforeach; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="5"><?php esc_html_e('No bookings found.', 'electric-lineman'); ?></td>
+                            <td colspan="5"><?php esc_html_e('No bookings found.', ELM_TEXT_DOMAIN); ?></td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

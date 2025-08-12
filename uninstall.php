@@ -27,5 +27,17 @@ if (!empty($bookings)) {
 
 
 global $wpdb;
+
+// Table name
 $table_name = $wpdb->prefix . 'elm_bookings';
-$wpdb->query("DROP TABLE IF EXISTS $table_name");
+
+// Drop custom table
+$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+
+// Delete plugin options
+delete_option('elm_plugin_settings');
+
+// If multisite, delete network options
+if (is_multisite()) {
+    delete_site_option('elm_plugin_settings');
+}

@@ -1,7 +1,7 @@
 <?php
 namespace ELM;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 class Main {
 
@@ -22,20 +22,11 @@ class Main {
     }
 
     private function init_hooks() {
-        (new \ELM\Form_Handler())->init();
-        (new \ELM\Admin_View())->init();
-        (new \ELM\Settings_Page())->init();
-        //new \ELM\Routes\DB_Handler();
+        ( new \ELM\Form_Handler() )->init();
+        ( new \ELM\Admin_View() )->init();
+        ( new \ELM\Settings_Page() )->init();
 
         new \ELM\Routes\Route_Booking();
         new \ELM\Routes\Route_Settings();
-
-        // register_activation_hook(
-        //     __FILE__,
-        //     function() {
-        //         (new \ELM\Routes\DB_Handler())->activate();
-        //     }
-        // );
     }
 }
- 
