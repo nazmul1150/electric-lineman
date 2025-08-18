@@ -6,37 +6,38 @@ defined('ABSPATH') || exit;
 class Form_Handler {
 
     public function init() {
-        // Handle form submission for both logged-in and guest users
-        add_action('admin_post_nopriv_elm_submit_booking', [$this, 'handle_form']);
-        add_action('admin_post_elm_submit_booking', [$this, 'handle_form']);
+        // ✅ Shortcode add
+        add_shortcode('elm_booking_form', [$this, 'render_form']);
+
+        // ✅ Debug log
+        error_log("✅ ELM Booking Form Shortcode Registered");
     }
 
-    public function handle_form() {
-        // Validate nonce
-        if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce($_POST['_wpnonce'], 'elm_booking_form') ) {
-            wp_die(__('Invalid nonce.', ELM_TEXT_DOMAIN));
-        }
-
-        // Sanitize form inputs
-        $name    = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
-        $email   = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        $phone   = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
-        $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
-
-        // Example: Save to custom table or post type
-        $post_id = wp_insert_post([
-            'post_type'   => 'elm_booking',
-            'post_title'  => $name,
-            'post_status' => 'publish',
-            'meta_input'  => [
-                'email'   => $email,
-                'phone'   => $phone,
-                'message' => $message,
-            ]
-        ]);
-
-        // Redirect after submission
-        wp_redirect(home_url('/thank-you'));
-        exit;
+    public function render_form() {
+        ob_start();
+        ?>
+        <form method="post" class="elm-booking-form">
+            <p>
+                <label for="elm_name"><?php esc_html_e('Name', ELM_TEXT_DOMAIN); ?></label><br>
+                <input type="text" name="elm_name" id="elm_name" required>
+            </p>
+            <p>
+                <label for="elm_phone"><?php esc_html_e('Phone', ELM_TEXT_DOMAIN); ?></label><br>
+                <input type="text" name="elm_phone" id="elm_phone" required>
+            </p>
+            <p>
+                <label for="elm_service"><?php esc_html_e('Service', ELM_TEXT_DOMAIN); ?></label><br>
+                <input type="text" name="elm_service" id="elm_service" required>
+            </p>
+            <p>
+                <label for="elm_date"><?php esc_html_e('Booking Date', ELM_TEXT_DOMAIN); ?></label><br>
+                <input type="date" name="elm_date" id="elm_date" required>
+            </p>
+            <p>
+                <button type="submit"><?php esc_html_e('Book Now', ELM_TEXT_DOMAIN); ?></button>
+            </p>
+        </form>
+        <?php
+        return ob_get_clean();
     }
 }
