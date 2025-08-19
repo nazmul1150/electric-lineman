@@ -10,50 +10,44 @@ class Route_Settings {
     }
 
     public function register_routes() {
-        register_rest_route('electric/v1', '/settings', [
+        register_rest_route('elm/v1', '/settings', [
             [
-                'methods'             => 'GET',
-                'callback'            => [$this, 'get_settings'],
-                'permission_callback' => [$this, 'permissions_check'],
+                'methods'  => 'GET',
+                'callback' => [$this, 'get_settings'],
+                'permission_callback' => function () {
+                    return current_user_can('manage_options');
+                },
             ],
             [
-                'methods'             => 'POST',
-                'callback'            => [$this, 'update_settings'],
-                'permission_callback' => [$this, 'permissions_check'],
-            ]
+                'methods'  => 'POST',
+                'callback' => [$this, 'update_settings'],
+                'permission_callback' => function () {
+                    return current_user_can('manage_options');
+                },
+            ],
         ]);
     }
 
-    public function permissions_check($request) {
-        return current_user_can('manage_options');
-    }
-
-    public function get_settings($request) {
-        $settings = [
-            'default_message' => get_option('elm_default_message', ''),
-            'notification_email' => get_option('elm_notification_email', get_option('admin_email')),
+    public function get_settings() {
+        return [
+            'company_name'  => get_option('elm_company_name', ''),
+            'company_phone' => get_option('elm_company_phone', ''),
         ];
-
-        return rest_ensure_response([
-            'status' => 'success',
-            'data'   => $settings,
-        ]);
     }
 
-    public function update_settings($request) {
-        $params = $request->get_json_params();
+    public function update_settings(\WP_REST_Request $request) {
+        $data = $request->get_json_params();
 
-        if (isset($params['default_message'])) {
-            update_option('elm_default_message', sanitize_text_field($params['default_message']));
+        if (isset($data['company_name'])) {
+            update_option('elm_company_name', sanitize_text_field($data['company_name']));
+        }
+        if (isset($data['company_phone'])) {
+            update_option('elm_company_phone', sanitize_text_field($data['company_phone']));
         }
 
-        if (isset($params['notification_email'])) {
-            update_option('elm_notification_email', sanitize_email($params['notification_email']));
-        }
-
-        return rest_ensure_response([
-            'status'  => 'success',
-            'message' => __('Settings updated.', ELM_TEXT_DOMAIN),
-        ]);
+        return [
+            'success' => true,
+            'message' => __('Settings saved successfully!', 'electric-lineman'),
+        ];
     }
 }

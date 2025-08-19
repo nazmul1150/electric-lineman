@@ -12,9 +12,9 @@ class Settings_Page {
     }
 
     public function init() {
-        add_action('admin_notices', [$this, 'plugin_admin_notices']);
         add_action('admin_menu', [$this, 'add_plugin_settings_page']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
+        add_action('admin_notices', [$this, 'plugin_admin_notices']);
     }
 
     public function add_plugin_settings_page() {
@@ -27,66 +27,67 @@ class Settings_Page {
             'dashicons-admin-generic',
             27
         );
-        //submenu
+
         add_submenu_page(
             'electric-lineman-settings',
-            __( 'All Bookings', ELM_TEXT_DOMAIN ),
-            __( 'Bookings', ELM_TEXT_DOMAIN ),
+            __('All Bookings', ELM_TEXT_DOMAIN),
+            __('Bookings', ELM_TEXT_DOMAIN),
             'manage_options',
             'elm-bookings',
-            [$this->admin_view, 'render_bookings_page'],
-            'dashicons-list-view',
-            26
+            [$this->admin_view, 'render_bookings_page']
         );
     }
 
     public function render_settings_page() {
         echo '<div class="wrap">';
         echo '<h1>' . esc_html__('Electric Lineman Settings', ELM_TEXT_DOMAIN) . '</h1>';
-        echo '<div id="electric-lineman-admin-root"></div>'; // React will hook here
+        echo '<div id="electric-lineman-admin-root"></div>'; // React mounts here
         echo '</div>';
     }
 
-    public function enqueue_admin_assets($hook_suffix) {
-        // Load only on our plugin's settings page
-        if ($hook_suffix !== 'toplevel_page_electric-lineman-settings') {
+    public function enqueue_admin_assets($hook) {
+        if ($hook !== 'toplevel_page_electric-lineman-settings') {
             return;
         }
 
-        $build_url = ELM_URL . 'build/';
-        // $asset_version = filemtime(ELM_PATH . 'build/static/js/main.js'); // Ensure cache busting
-        $asset_version = '1.0.0'; // For simplicity, use a static version
+        $build_url  = ELM_URL . 'build/';
+        $build_path = ELM_PATH . 'build/';
 
-        // Enqueue CSS
-        wp_enqueue_style(
-            'elm-admin-style',
-            $build_url . 'static/css/main.css',
-            [],
-            $asset_version
-        );
+        // style
+        if (file_exists($build_path . 'style.css')) {
+            wp_enqueue_style(
+                'elm-admin-style',
+                $build_url . 'style.css',
+                [],
+                filemtime($build_path . 'style.css')
+            );
+        }
 
-        // Enqueue JS
-        wp_enqueue_script(
-            'elm-admin-script',
-            $build_url . 'static/js/main.js',
-            [],
-            $asset_version,
-            true
-        );
+        // script (depends on WordPress' React + api-fetch)
+        if (file_exists($build_path . 'index.js')) {
+            wp_enqueue_script(
+                'elm-admin-script',
+                $build_url . 'index.js',
+                ['wp-element', 'wp-components', 'wp-api-fetch'],
+                filemtime($build_path . 'index.js'),
+                true
+            );
 
-        // Optional: Pass data to React if needed
-        wp_localize_script('elm-admin-script', 'elmSettings', [
-            'apiUrl' => esc_url_raw(rest_url('electric/v1/')),
-            'nonce'  => wp_create_nonce('wp_rest'),
-        ]);
+            wp_localize_script('elm-admin-script', 'elmSettings', [
+                'apiUrl' => esc_url_raw(rest_url('elm/v1/')),
+                'nonce'  => wp_create_nonce('wp_rest'),
+            ]);
+        }
     }
 
     public function plugin_admin_notices() {
-        if (isset($_GET['page']) && $_GET['page'] === 'electric-lineman-settings') {
-            echo '<div class="notice notice-warning">
-                    <p><strong>' . esc_html__('Warning:', ELM_TEXT_DOMAIN) . '</strong> 
-                    ' . esc_html__('If you delete the Electric Lineman plugin, all booking data will be permanently removed.', ELM_TEXT_DOMAIN) . '</p>
-                </div>';
+        if (!isset($_GET['page']) || $_GET['page'] !== 'electric-lineman-settings') {
+            return;
         }
+        echo '<div class="notice notice-warning"><p><strong>' .
+            esc_html__('Warning:', ELM_TEXT_DOMAIN) .
+            '</strong> ' .
+            esc_html__('If you delete the Electric Lineman plugin, all booking data will be permanently removed.', ELM_TEXT_DOMAIN) .
+            '</p></div>';
     }
 }
